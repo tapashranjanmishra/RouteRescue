@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RouteRescue</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#">
+        <span class="brand-mark">R</span>
+        <span
+          >route<span class="brand-light">rescue</span
+          ><small>SMARTER JOURNEYS</small></span
+        >
+      </a>
+      <nav class="main-nav">
+        <a href="#planner" class="active">Journey planner</a>
+        <a href="#routes">Routes</a>
+        <a href="#map-panel">Live map</a>
+      </nav>
+      <button class="avatar">G</button>
+    </header>
+
+    <main class="page-shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">TRAVEL / TRANSPORTATION</p>
+          <h1>Missed your bus?<br /><span>Your journey isn't over.</span></h1>
+          <p class="intro-copy">
+            Find your next departure, compare alternative routes and get moving
+            again.
+          </p>
+        </div>
+        <div class="service-note">
+          <span class="note-icon">↗</span>
+          <div>
+            <strong>A better way forward</strong
+            ><small>Plan the next step, not the missed one.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="planner card" id="planner">
+        <div class="section-top">
+          <div>
+            <p class="eyebrow">PLAN YOUR JOURNEY</p>
+            <h2>Where do you need to go?</h2>
+          </div>
+          <span class="step-label">01 / SEARCH</span>
+        </div>
+
+        <form id="journeyForm" class="search-grid">
+          <div class="input-wrap">
+            <label for="from">FROM</label>
+            <div class="input-control">
+              <span class="field-dot origin"></span>
+              <input
+                id="from"
+                value="Panikhaiti"
+                placeholder="Starting point"
+                autocomplete="off"
+                required
+              />
+            </div>
+            <div id="fromSuggestions" class="suggestions"></div>
+          </div>
+
+          <button type="button" id="swapBtn" class="swap-btn">⇄</button>
+
+          <div class="input-wrap">
+            <label for="to">TO</label>
+            <div class="input-control">
+              <span class="field-dot destination"></span>
+              <input
+                id="to"
+                value="Guwahati"
+                placeholder="Destination"
+                autocomplete="off"
+                required
+              />
+            </div>
+            <div id="toSuggestions" class="suggestions"></div>
+          </div>
+
+          <button type="submit" class="primary-btn">Find routes →</button>
+        </form>
+        <p id="formMessage" class="form-message"></p>
+      </section>
+
+      <div class="content-grid">
+        <section class="left-column" id="routes">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">YOUR OPTIONS</p>
+              <h2>Alternative routes</h2>
+            </div>
+            <span id="resultCount" class="result-count">OPTIONS</span>
+          </div>
+
+          <div id="routeList" class="route-list"></div>
+
+          <section class="selected-summary card">
+            <div class="summary-heading">
+              <div>
+                <p class="eyebrow">SELECTED JOURNEY</p>
+                <h3 id="selectedTitle">Selected route</h3>
+              </div>
+              <span class="selected-tag">SELECTED</span>
+            </div>
+
+            <div class="journey-line">
+              <div class="journey-stop">
+                <b class="stop-dot start"></b>
+                <div>
+                  <strong id="summaryFrom">Panikhaiti</strong
+                  ><small>Starting point</small>
+                </div>
+              </div>
+              <div class="journey-middle" id="summaryDuration">
+                Journey duration
+              </div>
+              <div class="journey-stop">
+                <b class="stop-dot end"></b>
+                <div>
+                  <strong id="summaryTo">Guwahati</strong
+                  ><small>Destination</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-stats">
+              <div>
+                <small>NEXT DEPARTURE</small
+                ><strong id="summaryWait">--</strong>
+              </div>
+              <div>
+                <small>ESTIMATED ARRIVAL</small
+                ><strong id="summaryEta">--</strong>
+              </div>
+              <div>
+                <small>TRANSFERS</small><strong id="summaryTransfers">0</strong>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="right-column" id="map-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ROUTE OVERVIEW</p>
+              <h2>Journey map</h2>
+            </div>
+            <span class="map-status">● Route Preview</span>
+          </div>
+
+          <div class="map-card">
+            <div id="map"></div>
+            <div class="map-legend">
+              <span><i class="legend-origin"></i>Start</span>
+              <span><i class="legend-destination"></i>Destination</span>
+              <span><i class="legend-bus"></i>Bus</span>
+            </div>
+          </div>
+
+          <div class="next-bus-card card">
+            <div class="bus-icon">BUS</div>
+            <div class="next-copy">
+              <small>NEXT AVAILABLE BUS</small>
+              <strong id="nextBusTime">--</strong>
+              <span id="nextBusLabel">Demo bus service</span>
+            </div>
+            <span class="arrival-live">ETA</span>
+            <button id="delayDemoBtn">Simulate 10-min delay</button>
+          </div>
+          <div class="live-tracking card">
+            <div class="tracking-header">
+              <div>
+                <p class="eyebrow">BUS LOCATION</p>
+                <h3>Live Bus Tracking</h3>
+              </div>
+              <span class="tracking-status">● DEMO</span>
+            </div>
+
+            <div class="tracking-info">
+              <div>
+                <small>BUS NUMBER</small>
+                <strong id="trackingBusNo">AS-01-1021</strong>
+              </div>
+              <div>
+                <small>ESTIMATED ARRIVAL</small>
+                <strong id="trackingETA">12 min</strong>
+              </div>
+            </div>
+
+            <div class="tracking-progress">
+              <div class="tracking-progress-fill" id="trackingProgress"></div>
+            </div>
+
+            <div class="tracking-footer">
+              <span id="trackingLocation">Bus approaching destination</span>
+              <span id="trackingPercent">35%</span>
+            </div>
+            <p class="tracking-note">
+              Simulated tracking — real-time GPS data not connected.
+        </p>
+          <div id="busSchedule" class="bus-schedule"></div>
+
+          <div id="delayAlert"></div>
+
+        </section>
+      </div>
+
+      <section class="how-section">
+        <p class="eyebrow">HOW IT HELPS</p>
+        <h2>Make the next move with confidence.</h2>
+        <div class="benefit-grid">
+          <article>
+            <span>01</span>
+            <h3>Compare options</h3>
+            <p>
+              Review journey duration and waiting time before choosing a route.
+            </p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>See the journey</h3>
+            <p>View your route with stops and destination markers.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Keep moving</h3>
+            <p>Choose an alternative instead of waiting without a plan.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="brand" href="#"
+        ><span class="brand-mark">R</span
+        ><span
+          >route<span class="brand-light">rescue</span
+          ><small>SMARTER JOURNEYS</small></span
+        ></a
+      >
+      <p>Missed the bus. Not the journey.</p>
+      <span>Ecclesia 4.0  · 2026</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
